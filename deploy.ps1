@@ -79,6 +79,7 @@ Write-Host "Step 4: Add Environment Variables:" -ForegroundColor Yellow
 Write-Host "        VITE_SUPABASE_URL = https://your-project.supabase.co" -ForegroundColor White
 Write-Host "        VITE_SUPABASE_ANON_KEY = your-anon-key-here" -ForegroundColor White
 Write-Host "        VITE_GOOGLE_CLIENT_ID = xxx.apps.googleusercontent.com (optional)" -ForegroundColor White
+Write-Host "    (do NOT set to a Secret name unless you create that secret separately with 'vercel secrets add')" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Step 5: Click Deploy" -ForegroundColor Yellow
 Write-Host ""
@@ -87,3 +88,16 @@ Write-Host ""
 Write-Host "GitHub:" -ForegroundColor Cyan
 Write-Host ('https://github.com/{0}/{1}' -f $GITHUB_USERNAME, $REPO_NAME) -ForegroundColor White
 Write-Host ""
+
+# If Vercel CLI is installed, offer to set these vars automatically
+if (Get-Command vercel -ErrorAction SilentlyContinue) {
+    Write-Host "Vercel CLI detected; you can auto‑configure the environment variables now." -ForegroundColor Cyan
+    $ans = Read-Host "Run 'vercel env add' for the Supabase vars? (y/n)"
+    if ($ans -match '^[Yy]') {
+        Write-Host "Adding VITE_SUPABASE_URL to production..." -ForegroundColor Yellow
+        vercel env add VITE_SUPABASE_URL production $SB_URL
+        Write-Host "Adding VITE_SUPABASE_ANON_KEY to production..." -ForegroundColor Yellow
+        vercel env add VITE_SUPABASE_ANON_KEY production $SB_KEY
+        Write-Host "You can repeat with 'preview' or 'development' targets if needed." -ForegroundColor Cyan
+    }
+}
