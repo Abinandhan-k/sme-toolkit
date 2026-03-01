@@ -49,7 +49,11 @@ Write-Host "Repository: $GITHUB_USERNAME/$REPO_NAME" -ForegroundColor Yellow
 Write-Host ""
 
 # Setup remote
-git remote remove origin 2>$null
+try {
+    git remote remove origin -ErrorAction Stop
+} catch {
+    # ignore if remote doesn't exist
+}
 git remote add origin "https://github.com/$GITHUB_USERNAME/$REPO_NAME.git"
 git branch -M main
 
